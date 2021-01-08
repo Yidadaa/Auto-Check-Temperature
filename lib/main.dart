@@ -17,6 +17,7 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       initialRoute: '/',
+      // initialRoute: '/settings',
       routes: {
         '/': (context) => LoginPage(),
         '/settings': (context) => SettingPage()
