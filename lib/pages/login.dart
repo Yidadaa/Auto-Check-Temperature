@@ -292,6 +292,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
+      resizeToAvoidBottomInset: false, // Yidadaa: 避免 resize 引起的键盘卡顿
       appBar: AppBar(
         elevation: 0,
         title: Text("打你🐎的卡"),

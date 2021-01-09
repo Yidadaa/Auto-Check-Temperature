@@ -93,6 +93,7 @@ class _SettingPageState extends State<SettingPage> {
           title: Text("设置"),
           elevation: 0,
         ),
+        resizeToAvoidBottomInset: false, // Yidadaa: 避免 resize 引起的键盘卡顿
         body: ListView(
           children: ListTile.divideTiles(
             context: context,
