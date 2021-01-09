@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingPage extends StatefulWidget {
   SettingPage({Key key}) : super(key: key);
@@ -11,8 +14,11 @@ class SettingPage extends StatefulWidget {
 class _SettingPageState extends State<SettingPage> {
   bool _isDebugging = false;
   bool _autoFillPass = false;
+  bool _isCheckingUpdate = false;
+  int year = DateTime.now().year;
   Map<String, String> _userInfo = {'id': '', 'pwd': ''};
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -47,6 +53,19 @@ class _SettingPageState extends State<SettingPage> {
     print(k + value);
   }
 
+  void _checkUpdate() async {
+    setState(() {
+      _isCheckingUpdate = true;
+    });
+    Timer(Duration(seconds: 1), () {
+      _scaffoldKey.currentState
+          .showSnackBar(SnackBar(content: Text('已经是最新版本。')));
+      setState(() {
+        _isCheckingUpdate = false;
+      });
+    });
+  }
+
   Widget _buildListItem(
       {IconData iconData,
       String title,
@@ -69,8 +88,10 @@ class _SettingPageState extends State<SettingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        key: _scaffoldKey,
         appBar: AppBar(
           title: Text("设置"),
+          elevation: 0,
         ),
         body: ListView(
           children: ListTile.divideTiles(
@@ -133,22 +154,44 @@ class _SettingPageState extends State<SettingPage> {
                 ],
               ),
               _buildListItem(
-                iconData: Icons.system_update,
-                title: '检查更新',
-                subtitle: '当前版本： 0.1',
-              ),
+                  onTap: _checkUpdate,
+                  iconData: Icons.system_update,
+                  title: '检查更新',
+                  subtitle: '当前版本： 0.1',
+                  trailing: _isCheckingUpdate
+                      ? Container(
+                          height: 18,
+                          width: 21,
+                          padding: EdgeInsets.only(right: 3),
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.2,
+                          ),
+                        )
+                      : null),
               _buildListItem(
-                iconData: Icons.thumb_up,
-                title: '搞得不错',
-                subtitle: '如果节省了你生命中的几秒钟',
-                trailing: Icon(Icons.open_in_new),
-              ),
+                  iconData: Icons.thumb_up,
+                  title: '搞得不错',
+                  subtitle: '如果节省了你生命中的几秒钟',
+                  trailing: Icon(Icons.open_in_new),
+                  onTap: () {
+                    launch('https://qr.alipay.com/fkx12171cwhhbzwv462buc6');
+                  }),
               _buildListItem(
-                iconData: Icons.local_play,
-                title: '项目主页',
-                subtitle: '外面冷，快进妙♂妙屋来坐坐',
-                trailing: Icon(Icons.open_in_new),
-              ),
+                  iconData: Icons.local_play,
+                  title: '项目主页',
+                  subtitle: '来看看有什么新动态',
+                  trailing: Icon(Icons.open_in_new),
+                  onTap: () {
+                    launch('https://github.com/Yidadaa/Auto-Check-Temperature');
+                  }),
+              _buildListItem(
+                  iconData: Icons.info_outline,
+                  title: '版权信息 © $year',
+                  subtitle: 'Zyf 💘 Yrn. All rights reserved.',
+                  trailing: Icon(Icons.open_in_new),
+                  onTap: () {
+                    launch('https://www.github.com/Yidadaa');
+                  }),
             ],
           ).toList(),
         ));

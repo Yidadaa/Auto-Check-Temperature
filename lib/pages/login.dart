@@ -23,7 +23,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 
   final _indexURL =
       'http://eportal.uestc.edu.cn/jkdkapp/sys/lwReportEpidemicStu/*default/index.do?client=mobile';
-  Uri _uri;
+  Uri _uri = Uri.parse('http://example.com');
   int _state = -1; // -1: 未登录; 0: 已登录; >= 1 && < 4: 体温打卡; 4: 每日报平安
   double _loadingStatus = 0;
   bool _isDebugging = true;
@@ -114,15 +114,16 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         break;
 
       case "eportal.uestc.edu.cn":
-        if (_state != 0 && currentUri.host != _uri.host)
+        if (_state < 0 && currentUri.host != _uri.host) {
           _showSnack("登录成功，现在可以开冲了。");
+        }
         // 注入 js 内容
         rootBundle
             .loadString('lib/js/fuck.js')
             .then((value) => _webViewController.evaluateJavascript(value));
         setState(() {
           _state = 0;
-          _loadingStatus += 0.5;
+          _loadingStatus = 1.0;
         });
         break;
       default:
