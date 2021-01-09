@@ -223,7 +223,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         _buildCard('😫', '上报中午体温', '中午的体温为 36 ℃', _state < 2),
         _buildCard('😝', '上报晚上体温', '晚上的体温为 36 ℃', _state < 3),
         _buildCard('🥱', '每日报平安', '好家伙，全让你给冲完了😅', _state < 4),
-        Expanded(
+        Container(
             child: Padding(
                 padding: EdgeInsets.only(top: 20),
                 child: RaisedButton.icon(
