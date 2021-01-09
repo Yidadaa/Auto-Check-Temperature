@@ -9,42 +9,61 @@ class SettingPage extends StatefulWidget {
 }
 
 class _SettingPageState extends State<SettingPage> {
-  bool isDebugging = false;
-  bool autoFillPass = false;
-  Map<String, String> userInfo = {'id': '', 'pwd': ''};
+  bool _isDebugging = false;
+  bool _autoFillPass = false;
+  Map<String, String> _userInfo = {'id': '', 'pwd': ''};
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   @override
   void initState() {
     _prefs.then((ins) {
-      isDebugging = ins.getBool('isDebugging') ?? false;
-      autoFillPass = ins.getBool('autoFillPass') ?? false;
-      userInfo['id'] = ins.getString('id');
-      userInfo['pwd'] = ins.getString('pwd');
+      _isDebugging = ins.getBool('isDebugging') ?? false;
+      _autoFillPass = ins.getBool('autoFillPass') ?? false;
+      _userInfo['id'] = ins.getString('id');
+      _userInfo['pwd'] = ins.getString('pwd');
       setState(() {}); // 重新渲染状态
     });
     super.initState();
   }
 
-  void updateDebugging(value) {
+  void _updateDebugging(value) {
     setState(() {
-      isDebugging = value;
+      _isDebugging = value;
     });
     _prefs.then((ins) => ins.setBool('isDebugging', value));
   }
 
-  void updateAutoFill(value) {
+  void _updateAutoFill(value) {
     setState(() {
-      autoFillPass = value;
+      _autoFillPass = value;
     });
     _prefs.then((ins) => ins.setBool('autoFillPass', value));
   }
 
-  void updateText(k, value) async {
+  void _updateText(k, value) async {
     var _prefs = await this._prefs;
-    userInfo[k] = value;
+    _userInfo[k] = value;
     await _prefs.setString(k, value);
     print(k + value);
+  }
+
+  Widget _buildListItem(
+      {IconData iconData,
+      String title,
+      String subtitle,
+      Widget trailing,
+      Function onTap}) {
+    return InkWell(
+      onTap: onTap ?? () {},
+      child: ListTile(
+          leading: Icon(
+            iconData,
+            size: 40,
+          ),
+          title: Text(title),
+          subtitle: Text(subtitle),
+          trailing: trailing),
+    );
   }
 
   @override
@@ -57,30 +76,34 @@ class _SettingPageState extends State<SettingPage> {
           children: ListTile.divideTiles(
             context: context,
             tiles: [
-              InkWell(
-                onTap: () {
-                  updateDebugging(!isDebugging);
-                },
-                child: ListTile(
-                  leading: Icon(Icons.developer_mode),
-                  title: Text('调试模式'),
-                  subtitle: Text('调试模式下，不会发送最终的打卡请求'),
-                  trailing:
-                      Switch(value: isDebugging, onChanged: updateDebugging),
-                ),
+              _buildListItem(
+                onTap: () => _updateDebugging(!_isDebugging),
+                iconData: Icons.developer_mode,
+                title: '调试模式',
+                subtitle: '此模式下不会发送打卡请求',
+                trailing:
+                    Switch(value: _isDebugging, onChanged: _updateDebugging),
               ),
               ExpansionTile(
-                initiallyExpanded: autoFillPass,
-                leading: Icon(Icons.ballot),
+                initiallyExpanded: _autoFillPass,
+                leading: Opacity(
+                  opacity: .87,
+                  child: Icon(Icons.ballot, size: 40),
+                ),
                 title: Text('自动填充账号密码'),
-                subtitle: Text('账号密码会被保存在本地'),
+                subtitle: Opacity(
+                  opacity: 0.54,
+                  child: Text(
+                    '账号密码会被保存在本地',
+                  ),
+                ),
                 children: [
                   ListTile(
                       leading: Text(''),
                       title: TextField(
                         controller: TextEditingController()
-                          ..text = userInfo['id'],
-                        onChanged: (value) => updateText('id', value),
+                          ..text = _userInfo['id'],
+                        onChanged: (value) => _updateText('id', value),
                         keyboardType: TextInputType.number,
                         decoration: InputDecoration(
                             isDense: true, labelText: '学号', hintText: '信息门户学号'),
@@ -89,43 +112,43 @@ class _SettingPageState extends State<SettingPage> {
                       leading: Text(''),
                       title: TextField(
                         controller: TextEditingController()
-                          ..text = userInfo['pwd'],
-                        onChanged: (value) => updateText('pwd', value),
+                          ..text = _userInfo['pwd'],
+                        onChanged: (value) => _updateText('pwd', value),
                         obscureText: true,
                         decoration: InputDecoration(
                             isDense: true, labelText: '密码', hintText: '信息门户密码'),
                       )),
                   InkWell(
                     onTap: () {
-                      updateAutoFill(!autoFillPass);
+                      _updateAutoFill(!_autoFillPass);
                     },
                     child: ListTile(
                         leading: Text(''),
                         title: Text('启用该功能'),
                         trailing: Switch(
-                          value: autoFillPass,
-                          onChanged: updateAutoFill,
+                          value: _autoFillPass,
+                          onChanged: _updateAutoFill,
                         )),
                   )
                 ],
               ),
-              ListTile(
-                leading: Icon(Icons.system_update),
-                title: Text('检查更新'),
-                subtitle: Text('当前版本： 0.1'),
+              _buildListItem(
+                iconData: Icons.system_update,
+                title: '检查更新',
+                subtitle: '当前版本： 0.1',
               ),
-              ListTile(
-                leading: Icon(Icons.thumb_up),
-                title: Text('搞得不错'),
-                subtitle: Text('如果这个应用节省了你生命中的几秒钟的话'),
+              _buildListItem(
+                iconData: Icons.thumb_up,
+                title: '搞得不错',
+                subtitle: '如果节省了你生命中的几秒钟',
                 trailing: Icon(Icons.open_in_new),
               ),
-              ListTile(
-                leading: Icon(Icons.info),
-                title: Text('项目主页'),
-                subtitle: Text('作者的妙♂妙屋，快进来坐坐'),
+              _buildListItem(
+                iconData: Icons.local_play,
+                title: '项目主页',
+                subtitle: '外面冷，快进妙♂妙屋来坐坐',
                 trailing: Icon(Icons.open_in_new),
-              )
+              ),
             ],
           ).toList(),
         ));
