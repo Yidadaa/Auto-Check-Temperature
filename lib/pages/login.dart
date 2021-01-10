@@ -216,7 +216,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 
   // 构建状态面板内容
   Widget _buildStatusContent() {
-    return ListView(
+    ListView statusList = ListView(
       padding: EdgeInsets.all(20),
       children: [
         _buildCard('😆', '上报早上体温', '早上的体温为 36 ℃', _state < 1),
@@ -252,12 +252,22 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                 )))
       ],
     );
+    return Container(
+      height: 480,
+      child: statusList,
+    );
   }
 
   // 弹出状态面板
   void _showStatusDialog() async {
     showModalBottomSheet(
+        isScrollControlled: true,
         context: context,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
+        ),
+        backgroundColor: Colors.white,
         builder: (context) {
           return StatefulBuilder(builder: (context, setModalState) {
             _setModelState = setModalState;
