@@ -14,7 +14,11 @@
 
 <br/>
 
-## Getting Started
+## 功能
+1. 自动填充账号密码（完全本地存储，具体可看源码）；
+2. 一键报平安和三次体温打卡，节省宝贵生命，有这时间为啥不去摸鱼呢（呲牙）。
+
+## 开发
 
 This project is a starting point for a Flutter application.
 
