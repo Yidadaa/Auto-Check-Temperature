@@ -7,12 +7,15 @@
 
 <b>电子科大研究生系统一键体温打卡和报平安。</b>
 
-<p>下载安装：<a href="https://github.com/Yidadaa/Auto-Check-Temperature/releases/latest/download/app-arm64-v8a-release.apk">Arm 64 位版本</a> | <a href="https://github.com/Yidadaa/Auto-Check-Temperature/releases/latest/download/app-armeabi-v7a-release.apk.apk">Arm 32 位版本</a> | <a href="https://github.com/Yidadaa/Auto-Check-Temperature/releases/latest/download/app-x86_64-release.apk">X86 64 位版本</a> </p>
+<p>下载安装：<a href="https://github.com/Yidadaa/Auto-Check-Temperature/releases/latest/download/app-arm64-v8a-release.apk">Arm 64 位版本（推荐）</a> | <a href="https://github.com/Yidadaa/Auto-Check-Temperature/releases/latest/download/app-armeabi-v7a-release.apk.apk">Arm 32 位版本</a> | <a href="https://github.com/Yidadaa/Auto-Check-Temperature/releases/latest/download/app-x86_64-release.apk">X86 64 位版本</a> </p>
 
 <img align="center" src="./imgs/screenshot.png" alt="screenshot"/>
 </div>
 
 <br/>
+
+## 安装提示
+对于大多数用户，请优先尝试安装 arm 64 版本；如果安装失败，请尝试 arm 32 位版本。如果还不行，不会真的有人在用 intel 芯片的安卓手机吧？不会吧不会吧？
 
 ## 功能
 1. 自动填充账号密码（完全本地存储，具体可看源码）；
