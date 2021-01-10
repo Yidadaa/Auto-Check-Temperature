@@ -5,8 +5,9 @@
 <br/><br/>
 <h1 align="center">体温打卡</h1>
 
-电子科大研究生系统一键体温打卡和报平安。
+<b>电子科大研究生系统一键体温打卡和报平安。</b>
 
+<p>下载安装：<a href="https://github.com/Yidadaa/Auto-Check-Temperature/releases/latest/download/app-arm64-v8a-release.apk">Arm 64 位版本</a> | <a href="https://github.com/Yidadaa/Auto-Check-Temperature/releases/latest/download/app-armeabi-v7a-release.apk.apk">Arm 32 位版本</a> | <a href="https://github.com/Yidadaa/Auto-Check-Temperature/releases/latest/download/app-x86_64-release.apk">X86 64 位版本</a> </p>
 
 <img align="center" src="./imgs/screenshot.png" alt="screenshot"/>
 </div>
