@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:core';
 
+import 'package:auto_check_temperature/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -157,7 +158,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 
   // 重载页面
   void _refresh() {
-    _webViewController.loadUrl(_indexURL);
+    // _webViewController.loadUrl(_indexURL);
+    checkUpdate().then((value) => print(value)).catchError((err) {});
   }
 
   // 自动填充密码

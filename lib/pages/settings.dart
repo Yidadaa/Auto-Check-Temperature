@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:auto_check_temperature/utils.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -71,6 +73,7 @@ class _SettingPageState extends State<SettingPage> {
     setState(() {
       _isCheckingUpdate = true;
     });
+
     Timer(Duration(seconds: 1), () {
       _scaffoldKey.currentState
           .showSnackBar(SnackBar(content: Text('已经是最新版本。')));
