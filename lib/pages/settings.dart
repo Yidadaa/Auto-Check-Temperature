@@ -102,6 +102,145 @@ class _SettingPageState extends State<SettingPage> {
     }
   }
 
+  void _contactMe() {
+    final Uri mailUri =
+        Uri(scheme: 'mailto', path: 'yidadaa@qq.com', queryParameters: {
+      'subject': '[体温应用反馈]一句话描述你的需求',
+      'body': '{version:$_localVersion}<br><br>请详细描述你遇到的问题或者想要提出的建议，最好提供截图。'
+    });
+    launch(mailUri.toString());
+  }
+
+  Widget _buildBubble(String text) {
+    return ClipRRect(
+      borderRadius: BorderRadius.all(Radius.circular(15)),
+      child: Container(
+        padding: EdgeInsets.all(10),
+        color: Colors.black12.withOpacity(.05),
+        child: Text(text),
+      ),
+    );
+  }
+
+  Widget _buildDeveloper() {
+    return Container(
+        padding: EdgeInsets.only(top: 5, left: 20, right: 20, bottom: 15),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+                child: Image.asset(
+                  'assets/images/developer.jpg',
+                  width: 50,
+                  height: 50,
+                )),
+            Expanded(
+                child: Padding(
+              padding: EdgeInsets.only(left: 15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 5),
+                    child: Text(
+                      '修仙写代码的开发者',
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  ),
+                  _buildBubble(
+                      '大家好，众所周知，学校的信息系统从来都是以浪费生命为己任，能用一个界面搞定的体温打卡绝对要想办法让我们一天点三次，“每日报平安”和班委人工打卡的双重机制更是令重度脑淤血患者直呼内行。'),
+                  Padding(
+                    padding: EdgeInsets.only(top: 10),
+                    child: _buildBubble(
+                        '在像个哈批一样点了快一年的屏幕之后，👴意识到这种打卡可能要没完没了了，所以就浪费了四天的生命整了个这玩意儿出来，希望可以帮到大家。'),
+                  ),
+                  Padding(
+                      padding: EdgeInsets.only(top: 10),
+                      child: _buildBubble(
+                          '如果你觉得这个活整得还行，可以使用下面的链接鼓励一下开发者，遇到 bug 可以使用邮箱进行反馈，祝大家都能省下宝贵的几秒钟。')),
+                ],
+              ),
+            ))
+          ],
+        ));
+  }
+
+  void _showDonateDialog() {
+    showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
+        ),
+        backgroundColor: Colors.white,
+        builder: (context) => Container(
+            height: MediaQuery.of(context).size.height * 0.85,
+            child: Column(children: [
+              Center(
+                child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 10),
+                    child: Icon(
+                      Icons.drag_handle,
+                      color: Colors.black12,
+                    )),
+              ),
+              Expanded(
+                  child: ListView(
+                children: [
+                  Column(
+                    children: [
+                      _buildDeveloper(),
+                      Divider(),
+                      _buildListItem(
+                          title: '一趟单程 396 (2 * 💰)',
+                          subtitle: '请作者去建设巷恰小吃',
+                          iconData: Icons.directions_bus,
+                          trailing: Icon(Icons.open_in_new),
+                          onTap: () => launch(
+                              'https://qr.alipay.com/fkx19323d0sibaj4qy8xm52')),
+                      _buildListItem(
+                          title: '一瓶快乐水 (3.5 * 💰)',
+                          subtitle: '恰什么小吃，肥宅水不香吗',
+                          iconData: Icons.fastfood,
+                          trailing: Icon(Icons.open_in_new),
+                          onTap: () => launch(
+                              'https://qr.alipay.com/fkx12451wztqnsv7gxyxxb5')),
+                      _buildListItem(
+                          title: '一盒烤冷面 (9 * 💰)',
+                          subtitle: '不会真的有人喜欢当肥宅吧',
+                          iconData: Icons.store_mall_directory,
+                          trailing: Icon(Icons.open_in_new),
+                          onTap: () => launch(
+                              'https://qr.alipay.com/fkx10872yq7vh8lbmmgqp72')),
+                      _buildListItem(
+                          title: '👴有的是钱 (∞ * 💰)',
+                          subtitle: '👴要闭着眼睛按零',
+                          iconData: Icons.local_atm,
+                          trailing: Icon(Icons.open_in_new),
+                          onTap: () => launch(
+                              'https://qr.alipay.com/fkx12171cwhhbzwv462buc6'))
+                    ],
+                  ),
+                ],
+              ))
+            ])));
+  }
+
+  Widget _buildCopyRight() {
+    return InkWell(
+      onTap: () => launch('https://www.github.com/Yidadaa'),
+      child: Container(
+          height: 100,
+          child: Center(
+              child: Opacity(
+            opacity: .2,
+            child: Text('© $_year Yda 💘 Yrn. All Rights Reserved.'),
+          ))),
+    );
+  }
+
   Widget _buildListItem(
       {IconData iconData,
       String title,
@@ -115,8 +254,8 @@ class _SettingPageState extends State<SettingPage> {
             iconData,
             size: 40,
           ),
-          title: Text(title),
-          subtitle: Text(subtitle),
+          title: title != null ? Text(title) : null,
+          subtitle: subtitle != null ? Text(subtitle) : null,
           trailing: trailing),
     );
   }
@@ -138,7 +277,7 @@ class _SettingPageState extends State<SettingPage> {
                 onTap: () => _updateDebugging(!_isDebugging),
                 iconData: Icons.developer_mode,
                 title: '调试模式',
-                subtitle: '小朋友不要点这个选项',
+                subtitle: '同学请不要乱点这个选项',
                 trailing:
                     Switch(value: _isDebugging, onChanged: _updateDebugging),
               ),
@@ -216,28 +355,27 @@ class _SettingPageState extends State<SettingPage> {
                       : null),
               _buildListItem(
                   iconData: Icons.thumb_up,
-                  title: '搞得不错',
-                  subtitle: '如果节省了你生命中的几秒钟',
-                  trailing: Icon(Icons.open_in_new),
+                  title: '针不戳',
+                  subtitle: '这个应用针不戳，好活，赏了',
+                  trailing: Icon(Icons.arrow_right),
                   onTap: () {
-                    launch('https://qr.alipay.com/fkx12171cwhhbzwv462buc6');
+                    _showDonateDialog();
+                    // launch('https://qr.alipay.com/fkx12171cwhhbzwv462buc6');
                   }),
               _buildListItem(
                   iconData: Icons.local_play,
                   title: '项目主页',
-                  subtitle: '来看看有什么新动态',
+                  subtitle: '来看看作者又整了什么新活',
                   trailing: Icon(Icons.open_in_new),
                   onTap: () {
                     launch('https://github.com/Yidadaa/Auto-Check-Temperature');
                   }),
               _buildListItem(
-                  iconData: Icons.info_outline,
-                  title: '版权信息 © $_year',
-                  subtitle: 'Zyf 💘 Yrn. All rights reserved.',
+                  iconData: Icons.mail,
+                  title: '和开发者对线',
+                  subtitle: 'Bug 竟是我自己.jpg',
                   trailing: Icon(Icons.open_in_new),
-                  onTap: () {
-                    launch('https://www.github.com/Yidadaa');
-                  }),
+                  onTap: _contactMe),
               _buildListItem(
                   iconData: Icons.logout,
                   title: '退出登录',
@@ -246,6 +384,7 @@ class _SettingPageState extends State<SettingPage> {
                   onTap: () {
                     Navigator.of(context).pop('logout');
                   }),
+              _buildCopyRight()
             ],
           ).toList(),
         ));

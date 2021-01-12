@@ -32,7 +32,7 @@ def depoly():
   # new version
   now_date = datetime.now()
   new_version = {
-    'ver': '{:.2f}'.format(last_version_info['ver'] + 0.1),
+    'ver': '{:.1f}'.format(last_version_info['ver'] + 0.1),
     'publishDate': now_date.strftime('%Y-%m-%d %H:%M:%S'),
     'ts': now_date.timestamp(),
     'description': [],
@@ -51,16 +51,18 @@ def depoly():
   with open(spec_path, 'r') as fp:
     spec_content = fp.read().split('\n')
 
+  # confirm save
   if input('\nConfirm(Y/n): ').upper() != 'N':
     with open(version_path, 'w', encoding='utf-8') as fp:
       json.dump(new_version, fp)
+    # write spec file
     with open(spec_path, 'w') as fp:
       new_spec_content = []
       for line in spec_content:
         if line.startswith('version:'):
-          line = 'version: {:.2f}.0'.format(new_version['ver'])
+          line = 'version: {}.0'.format(new_version['ver'])
         new_spec_content.append(line)
-      fp.write('\n'.join(spec_content))
+      fp.write('\n'.join(new_spec_content))
     print('Done.')
   else:
     print('Canceled.')
