@@ -111,13 +111,16 @@ class _SettingPageState extends State<SettingPage> {
     launch(mailUri.toString());
   }
 
-  Widget _buildBubble(String text) {
-    return ClipRRect(
-      borderRadius: BorderRadius.all(Radius.circular(15)),
-      child: Container(
-        padding: EdgeInsets.all(10),
-        color: Colors.black12.withOpacity(.05),
-        child: Text(text),
+  Widget _buildBubble(String text, {bool withPadding = false}) {
+    return Padding(
+      padding: EdgeInsets.only(top: withPadding ? 10 : 0),
+      child: ClipRRect(
+        borderRadius: BorderRadius.all(Radius.circular(15)),
+        child: Container(
+          padding: EdgeInsets.all(10),
+          color: Colors.black12.withOpacity(.05),
+          child: Text(text),
+        ),
       ),
     );
   }
@@ -148,17 +151,9 @@ class _SettingPageState extends State<SettingPage> {
                       style: TextStyle(color: Colors.grey),
                     ),
                   ),
-                  _buildBubble(
-                      '大家好，众所周知，学校的信息系统从来都是以浪费生命为己任，能用一个界面搞定的体温打卡绝对要想办法让我们一天点三次，“每日报平安”和班委人工打卡的双重机制更是令重度脑淤血患者直呼内行。'),
-                  Padding(
-                    padding: EdgeInsets.only(top: 10),
-                    child: _buildBubble(
-                        '在像个哈批一样点了快一年的屏幕之后，👴意识到这种打卡可能要没完没了了，所以就浪费了四天的生命整了个这玩意儿出来，希望可以帮到大家。'),
-                  ),
-                  Padding(
-                      padding: EdgeInsets.only(top: 10),
-                      child: _buildBubble(
-                          '如果你觉得这个活整得还行，可以使用下面的链接鼓励一下开发者，遇到 bug 可以使用邮箱进行反馈，祝大家都能省下宝贵的几秒钟。')),
+                  _buildBubble('大家好，吃早饭了吗？'),
+                  _buildBubble('没事，我还能肝', withPadding: true),
+                  _buildBubble('下面有几个按钮，据说可以给开发者充能', withPadding: true),
                 ],
               ),
             ))
@@ -176,7 +171,7 @@ class _SettingPageState extends State<SettingPage> {
         ),
         backgroundColor: Colors.white,
         builder: (context) => Container(
-            height: MediaQuery.of(context).size.height * 0.85,
+            height: MediaQuery.of(context).size.height * 0.7,
             child: Column(children: [
               Center(
                 child: Padding(
@@ -194,28 +189,28 @@ class _SettingPageState extends State<SettingPage> {
                       _buildDeveloper(),
                       Divider(),
                       _buildListItem(
-                          title: '一趟单程 396 (2 * 💰)',
+                          title: '一趟单程 396',
                           subtitle: '请作者去建设巷恰小吃',
                           iconData: Icons.directions_bus,
                           trailing: Icon(Icons.open_in_new),
                           onTap: () => launch(
                               'https://qr.alipay.com/fkx19323d0sibaj4qy8xm52')),
                       _buildListItem(
-                          title: '一瓶快乐水 (3.5 * 💰)',
+                          title: '一瓶快乐水 (',
                           subtitle: '恰什么小吃，肥宅水不香吗',
                           iconData: Icons.fastfood,
                           trailing: Icon(Icons.open_in_new),
                           onTap: () => launch(
                               'https://qr.alipay.com/fkx12451wztqnsv7gxyxxb5')),
                       _buildListItem(
-                          title: '一盒烤冷面 (9 * 💰)',
+                          title: '一盒烤冷面',
                           subtitle: '不会真的有人喜欢当肥宅吧',
                           iconData: Icons.store_mall_directory,
                           trailing: Icon(Icons.open_in_new),
                           onTap: () => launch(
                               'https://qr.alipay.com/fkx10872yq7vh8lbmmgqp72')),
                       _buildListItem(
-                          title: '👴有的是钱 (∞ * 💰)',
+                          title: '👴有的是钱',
                           subtitle: '👴要闭着眼睛按零',
                           iconData: Icons.local_atm,
                           trailing: Icon(Icons.open_in_new),

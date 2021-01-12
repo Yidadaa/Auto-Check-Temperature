@@ -5,10 +5,10 @@
 <br/><br/>
 <h1 align="center">体温打卡</h1>
 
-<b>电子科大研究生系统一键体温打卡和报平安。</b>
-
+<b>电子科大研究生系统一键体温打卡和报平安。</b><br>
+<i>提示：请使用系统浏览器进行下载，微信浏览器不会响应下载请求。</i>
 <p>下载安装：<a href="https://github.com/Yidadaa/Auto-Check-Temperature/releases/latest/download/app-arm64-v8a-release.apk">arm 64 位版本（推荐）</a> | <a href="https://github.com/Yidadaa/Auto-Check-Temperature/releases/latest/download/app-armeabi-v7a-release.apk">arm 32 位版本</a> | <a href="https://github.com/Yidadaa/Auto-Check-Temperature/releases/latest/download/app-x86_64-release.apk">x86 64 位版本</a> </p>
-<p>国内镜像：<a href="https://gitee.com/yidadaa/Auto-Check-Temperature">代码仓库</a> | <a href="https://gitee.com/yidadaa/Auto-Check-Temperature/releases">下载页</a>
+<p>镜像加速：<a href="https://gitee.com/yidadaa/Auto-Check-Temperature/attach_files/582501/download/app-arm64-v8a-release.apk">arm 64 位版本（推荐）</a> | <a href="https://gitee.com/yidadaa/Auto-Check-Temperature/attach_files/582500/download/app-armeabi-v7a-release.apk">arm 32 位版本</a> | <a href="https://gitee.com/yidadaa/Auto-Check-Temperature/attach_files/582502/download/app-x86_64-release.apk">x86 64 位版本</a> </p>
 
 
 <img align="center" src="./assets/images/screenshot.png" alt="screenshot"/>
@@ -27,12 +27,7 @@
 
 ## 开发
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+这是一个 Flutter 项目，请参照下方文档链接配置 Flutter 开发环境。
 
 For help getting started with Flutter, view our
 [online documentation](https://flutter.dev/docs), which offers tutorials,
