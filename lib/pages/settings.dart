@@ -15,7 +15,8 @@ class _SettingPageState extends State<SettingPage> {
   bool _isDebugging = false;
   bool _autoFillPass = false;
   bool _isCheckingUpdate = false;
-  int year = DateTime.now().year;
+  bool _showIntroCard = false;
+  int _year = DateTime.now().year;
   Map<String, String> _userInfo = {'id': '', 'pwd': ''};
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -25,6 +26,7 @@ class _SettingPageState extends State<SettingPage> {
     _prefs.then((ins) {
       _isDebugging = ins.getBool('isDebugging') ?? false;
       _autoFillPass = ins.getBool('autoFillPass') ?? false;
+      _showIntroCard = ins.getBool('showIntroCard') ?? false;
       _userInfo['id'] = ins.getString('id');
       _userInfo['pwd'] = ins.getString('pwd');
       setState(() {}); // 重新渲染状态
@@ -32,11 +34,24 @@ class _SettingPageState extends State<SettingPage> {
     super.initState();
   }
 
+  void _updateIntroCard(value) {
+    setState(() {
+      _showIntroCard = value;
+    });
+    _prefs.then((ins) => ins.setBool('showIntroCard', value));
+  }
+
   void _updateDebugging(value) {
     setState(() {
       _isDebugging = value;
     });
     _prefs.then((ins) => ins.setBool('isDebugging', value));
+    if (value) {
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text('调试模式下不会发送打卡请求。'),
+        duration: Duration(seconds: 1),
+      ));
+    }
   }
 
   void _updateAutoFill(value) {
@@ -50,7 +65,6 @@ class _SettingPageState extends State<SettingPage> {
     var _prefs = await this._prefs;
     _userInfo[k] = value;
     await _prefs.setString(k, value);
-    print(k + value);
   }
 
   void _checkUpdate() async {
@@ -102,12 +116,21 @@ class _SettingPageState extends State<SettingPage> {
                 onTap: () => _updateDebugging(!_isDebugging),
                 iconData: Icons.developer_mode,
                 title: '调试模式',
-                subtitle: '此模式下不会发送打卡请求',
+                subtitle: '小朋友不要点这个选项',
                 trailing:
                     Switch(value: _isDebugging, onChanged: _updateDebugging),
               ),
+              if (_isDebugging)
+                _buildListItem(
+                  onTap: () => _updateIntroCard(!_showIntroCard),
+                  iconData: Icons.pages,
+                  title: '引导卡片',
+                  subtitle: '开启后会在首页展示使用引导',
+                  trailing: Switch(
+                      value: _showIntroCard, onChanged: _updateIntroCard),
+                ),
               ExpansionTile(
-                initiallyExpanded: _autoFillPass,
+                initiallyExpanded: true,
                 leading: Opacity(
                   opacity: .87,
                   child: Icon(Icons.ballot, size: 40),
@@ -187,11 +210,19 @@ class _SettingPageState extends State<SettingPage> {
                   }),
               _buildListItem(
                   iconData: Icons.info_outline,
-                  title: '版权信息 © $year',
+                  title: '版权信息 © $_year',
                   subtitle: 'Zyf 💘 Yrn. All rights reserved.',
                   trailing: Icon(Icons.open_in_new),
                   onTap: () {
                     launch('https://www.github.com/Yidadaa');
+                  }),
+              _buildListItem(
+                  iconData: Icons.logout,
+                  title: '退出登录',
+                  subtitle: '将会清除登录信息',
+                  trailing: Icon(Icons.arrow_right),
+                  onTap: () {
+                    Navigator.of(context).pop('logout');
                   }),
             ],
           ).toList(),

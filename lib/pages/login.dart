@@ -18,6 +18,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final GlobalKey<_IntroCardState> _introKey = new GlobalKey<_IntroCardState>();
 
   WebViewController _webViewController;
 
@@ -29,6 +30,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   bool _isDebugging = true;
   bool _showingSnack = false;
   bool _needRefresh = false;
+  bool _showIntroCard = false;
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   AnimationController _animationController;
   Animation<double> _animation;
@@ -176,11 +178,25 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   void _loadData() {
     _prefs.then((pf) {
       _isDebugging = pf.getBool('isDebugging') ?? false;
+      _showIntroCard = pf.getBool('showIntroCard') ?? true;
       print('debug: $_isDebugging');
       setState(() {
         _loadingStatus += 0.5;
       });
     });
+  }
+
+  // 跳转到设置页
+  void _gotoSetting() {
+    Navigator.pushNamed(context, '/settings').then((action) {
+      print('from setting: $action');
+      if (action == 'logout') _logout();
+    }).whenComplete(_loadData);
+  }
+
+  // 返回页
+  void _goback() async {
+    _webViewController.goBack();
   }
 
   // 构建加载提示卡片
@@ -276,79 +292,51 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         });
   }
 
-  // 构建弹出菜单的入口
-  PopupMenuItem _buildPopupMenuItem(
-      IconData iconData, String text, Function onTap) {
-    return PopupMenuItem(
-      value: onTap,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Icon(
-            iconData,
-            color: Colors.black,
-            size: 25,
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: 20),
-            child: Text(text),
-          )
-        ],
-      ),
-    );
+  // 顶栏操作
+  List _buildActions() {
+    List<Widget> items = [
+      IconButton(icon: Icon(Icons.arrow_back), onPressed: _goback),
+      IconButton(icon: Icon(Icons.refresh), onPressed: _refresh),
+      IconButton(icon: Icon(Icons.settings), onPressed: _gotoSetting),
+    ];
+
+    if (_isDebugging)
+      items.add(IconButton(
+          icon: Icon(Icons.developer_board), onPressed: _showStatusDialog));
+
+    return items;
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildPage(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
       resizeToAvoidBottomInset: false, // Yidadaa: 避免 resize 引起的键盘卡顿
       appBar: AppBar(
         elevation: 0,
         title: Text("打你🐎的卡"),
-        actions: [
-          IconButton(
-              icon: Icon(Icons.arrow_back),
-              onPressed: () => _webViewController.goBack()),
-          IconButton(icon: Icon(Icons.refresh), onPressed: _refresh),
-          PopupMenuButton(
-            itemBuilder: (_context) {
-              var itemList = [
-                _buildPopupMenuItem(Icons.logout, '退出登录', _logout),
-                _buildPopupMenuItem(Icons.settings, '设置', () {
-                  Navigator.pushNamed(context, '/settings')
-                      .whenComplete(_loadData);
-                }),
-              ];
-              if (_isDebugging)
-                itemList.insert(
-                    0,
-                    _buildPopupMenuItem(
-                        Icons.developer_board, '调试弹窗', _showStatusDialog));
-              return itemList;
-            },
-            onSelected: (callback) {
-              callback();
-            },
-          ),
-        ],
+        actions: _buildActions(),
       ),
-      body: Column(
+      body: Stack(
         children: [
-          LinearProgressIndicator(
-            value: _loadingStatus,
+          Column(
+            children: [
+              LinearProgressIndicator(
+                value: _loadingStatus,
+              ),
+              Expanded(
+                  child: WebView(
+                initialUrl: _indexURL,
+                javascriptMode: JavascriptMode.unrestricted,
+                onPageFinished: _handleNavigation,
+                onWebViewCreated: (controller) {
+                  _webViewController = controller;
+                },
+                javascriptChannels:
+                    <JavascriptChannel>[_jsChannel(context)].toSet(),
+              ))
+            ],
           ),
-          Expanded(
-              child: WebView(
-            initialUrl: _indexURL,
-            javascriptMode: JavascriptMode.unrestricted,
-            onPageFinished: _handleNavigation,
-            onWebViewCreated: (controller) {
-              _webViewController = controller;
-            },
-            javascriptChannels:
-                <JavascriptChannel>[_jsChannel(context)].toSet(),
-          ))
+          if (_showIntroCard) IntroCard(key: _introKey)
         ],
       ),
       floatingActionButton: _state >= 0
@@ -363,5 +351,132 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         padding: EdgeInsets.only(top: 100),
       ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+        child: _buildPage(context),
+        onWillPop: () async {
+          _goback();
+          return Future.value(false);
+        });
+  }
+}
+
+class IntroCard extends StatefulWidget {
+  IntroCard({Key key}) : super(key: key);
+
+  @override
+  _IntroCardState createState() => _IntroCardState();
+}
+
+class _IntroCardState extends State<IntroCard> with TickerProviderStateMixin {
+  AnimationController _animationController;
+  Animation<double> _cardAnimation;
+
+  @override
+  void initState() {
+    _animationController =
+        AnimationController(duration: Duration(milliseconds: 300), vsync: this);
+    _cardAnimation = CurvedAnimation(
+        parent: _animationController, curve: Curves.easeInOutCirc);
+    _showCard();
+    super.initState();
+  }
+
+  void _gotoSetting() {
+    Navigator.of(context).pushNamed('/settings');
+    _hideCard();
+  }
+
+  void _neverShow() {
+    SharedPreferences.getInstance().then((ins) {
+      ins.setBool('showIntroCard', false);
+    });
+    _hideCard();
+  }
+
+  void _hideCard() {
+    _animationController.reverse();
+  }
+
+  void _showCard() {
+    _animationController.forward();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Color pcolor = Theme.of(context).primaryColor;
+
+    return FadeTransition(
+        opacity: _cardAnimation,
+        child: ScaleTransition(
+          alignment: Alignment.topRight,
+          scale: _cardAnimation,
+          child: Column(
+            children: [
+              Card(
+                elevation: 10,
+                margin: EdgeInsets.all(20),
+                child: Padding(
+                    padding: EdgeInsets.only(
+                        top: 20, left: 20, right: 20, bottom: 5),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(right: 5),
+                              child: Icon(
+                                Icons.info,
+                                color: pcolor,
+                                size: 22,
+                              ),
+                            ),
+                            Text(
+                              '使用提示',
+                              style: TextStyle(fontSize: 16, color: pcolor),
+                            )
+                          ],
+                        ),
+                        Container(
+                            height: 200,
+                            padding: EdgeInsets.symmetric(vertical: 10),
+                            child: ClipRRect(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10)),
+                                child: Image.asset(
+                                  'assets/images/setting.png',
+                                  fit: BoxFit.fitWidth,
+                                ))),
+                        Text('由于网页端登录信息会在几个小时内失效，可以在设置里开启自动填充账号密码，从而节省登录用时。',
+                            style: TextStyle(
+                              fontSize: 16,
+                            )),
+                        ButtonBar(
+                          children: [
+                            FlatButton(
+                              onPressed: _neverShow,
+                              child: Text(
+                                '不再提醒',
+                                style: TextStyle(
+                                  color: pcolor,
+                                ),
+                              ),
+                            ),
+                            RaisedButton(
+                              onPressed: _gotoSetting,
+                              child: Text('前往设置'),
+                              color: pcolor,
+                            )
+                          ],
+                        )
+                      ],
+                    )),
+              ),
+            ],
+          ),
+        ));
   }
 }
