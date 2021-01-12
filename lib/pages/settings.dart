@@ -1,8 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:auto_check_temperature/utils.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -22,6 +23,7 @@ class _SettingPageState extends State<SettingPage> {
   Map<String, String> _userInfo = {'id': '', 'pwd': ''};
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  String _localVersion;
 
   @override
   void initState() {
@@ -31,9 +33,19 @@ class _SettingPageState extends State<SettingPage> {
       _showIntroCard = ins.getBool('showIntroCard') ?? false;
       _userInfo['id'] = ins.getString('id');
       _userInfo['pwd'] = ins.getString('pwd');
+      _loadLocalVersion();
       setState(() {}); // 重新渲染状态
     });
     super.initState();
+  }
+
+  void _loadLocalVersion() {
+    rootBundle.loadString('assets/version.json').then((res) {
+      setState(() {
+        Map lVersion = jsonDecode(res);
+        if (lVersion != null) _localVersion = lVersion['ver'];
+      });
+    });
   }
 
   void _updateIntroCard(value) {
@@ -74,13 +86,20 @@ class _SettingPageState extends State<SettingPage> {
       _isCheckingUpdate = true;
     });
 
-    Timer(Duration(seconds: 1), () {
-      _scaffoldKey.currentState
-          .showSnackBar(SnackBar(content: Text('已经是最新版本。')));
+    Map versionInfo = await checkUpdate();
+
+    if (versionInfo != null && versionInfo.containsKey('ver')) {
+      String latestVersion = versionInfo['ver'];
+      if (latestVersion == _localVersion)
+        _scaffoldKey.currentState
+            .showSnackBar(SnackBar(content: Text('已经是最新版本。')));
+      else
+        _scaffoldKey.currentState.showSnackBar(
+            SnackBar(content: Text('发现新版本：$latestVersion，请前往主页更新。')));
       setState(() {
         _isCheckingUpdate = false;
       });
-    });
+    }
   }
 
   Widget _buildListItem(
@@ -184,7 +203,7 @@ class _SettingPageState extends State<SettingPage> {
                   onTap: _checkUpdate,
                   iconData: Icons.system_update,
                   title: '检查更新',
-                  subtitle: '当前版本： 0.1',
+                  subtitle: '当前版本：$_localVersion',
                   trailing: _isCheckingUpdate
                       ? Container(
                           height: 18,
