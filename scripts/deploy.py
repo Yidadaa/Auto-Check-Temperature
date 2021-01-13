@@ -15,7 +15,7 @@ def depoly():
   spec_path = os.path.join(script_folder, '../pubspec.yaml')
 
   # print last version info
-  with open(version_path, 'r', encoding='utf-8') as fp:
+  with open(version_path, 'r', encoding='utf-8-sig') as fp:
     last_version_info = json.load(fp)
   print('Last Version Info:')
   print(last_version_info)
@@ -47,13 +47,16 @@ def depoly():
   print('\nNew Version Info:')
   print(new_version)
 
+  print('\nRelease Notes:')
+  print('\n'.join(['- ' + line for line in new_version['description']]))
+
   # update yaml file
   with open(spec_path, 'r') as fp:
     spec_content = fp.read().split('\n')
 
   # confirm save
   if input('\nConfirm(Y/n): ').upper() != 'N':
-    with open(version_path, 'w', encoding='utf-8') as fp:
+    with open(version_path, 'w', encoding='utf-8-sig') as fp:
       json.dump(new_version, fp)
     # write spec file
     with open(spec_path, 'w') as fp:
