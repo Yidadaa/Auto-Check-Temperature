@@ -244,7 +244,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                 padding: EdgeInsets.only(top: 20),
                 child: RaisedButton.icon(
                   disabledColor: Colors.black12,
-                  color: Colors.blueGrey,
+                  color: Theme.of(context).primaryColor,
                   elevation: 1,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(100)),

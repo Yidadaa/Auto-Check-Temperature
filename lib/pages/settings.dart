@@ -196,7 +196,7 @@ class _SettingPageState extends State<SettingPage> {
                           onTap: () => launch(
                               'https://qr.alipay.com/fkx19323d0sibaj4qy8xm52')),
                       _buildListItem(
-                          title: '一瓶快乐水 (',
+                          title: '一瓶快乐水',
                           subtitle: '恰什么小吃，肥宅水不香吗',
                           iconData: Icons.fastfood,
                           trailing: Icon(Icons.open_in_new),
@@ -210,8 +210,8 @@ class _SettingPageState extends State<SettingPage> {
                           onTap: () => launch(
                               'https://qr.alipay.com/fkx10872yq7vh8lbmmgqp72')),
                       _buildListItem(
-                          title: '👴有的是钱',
-                          subtitle: '👴要闭着眼睛按零',
+                          title: '有的是钱',
+                          subtitle: '可以闭着眼睛按零吗？',
                           iconData: Icons.local_atm,
                           trailing: Icon(Icons.open_in_new),
                           onTap: () => launch(
